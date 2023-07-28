@@ -23,7 +23,7 @@ public class SensorController {
         return str;
     }
 
-    @GetMapping("/test")
+     @GetMapping("/test")
     public String getTest(){
         log.info("test");
         return "test";
