@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Slf4j
 public class Calibration {
-    public double getTriY(int id, int r, int g, int b) {
+    public double getTriY(int id, int r, int g, int b) { // 삼자극치 Y == 조도
         switch (id) {
             case 1:
                 return -0.279092984 + r * 0.061654097 + g * 0.161100176 + b * (-0.029059113);
@@ -91,5 +91,4 @@ public class Calibration {
         double cct = -437 * n * n * n + 3607 * n * n - 6861 * n + 5514.31;
         return cct;
     }
-
 }

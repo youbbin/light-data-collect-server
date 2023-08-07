@@ -1,6 +1,7 @@
 package com.example.lightserver.service;
 
 import com.example.lightserver.dto.SensorDto;
+import com.example.lightserver.entity.Light;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -9,15 +10,18 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
 
 import org.springframework.data.mongodb.core.query.Query;
 
 import org.springframework.data.mongodb.core.query.Update;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class lightService {
+public class LightService {
 
     private final MongoTemplate mongoTemplate;
     private final Calibration calibration;
@@ -38,7 +42,19 @@ public class lightService {
         mongoTemplate.upsert(query, update, "light");
 
         log.info("Sensor Datetime : " + sensorDto.getDatetime());
+        log.info("ISO Datetime : "+dateTime);
         return "Save Completed !";
+    }
+
+    public Light getStatus(){
+
+        LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
+        Query query = new Query(Criteria.where("datetime").is(now));
+
+        Light test = mongoTemplate.findOne(query,Light.class,"light");
+        log.info(Double.toString(test.getIllum_1()));
+        return test;
+
     }
 
 
