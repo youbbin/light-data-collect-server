@@ -43,7 +43,7 @@ public class LightService {
         DateTimeFormatter input = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(sensorDto.getDatetime(), input);
 
-        Query query = new Query(Criteria.where("datetime").is(dateTime));
+        Query query = new Query(Criteria.where("datetime").is(dateTime.withNano(0)));
         Update update = new Update()
                 .set("cct_" + sensorDto.getSensorId(), calibration.getCct(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
                 .set("illum_" + sensorDto.getSensorId(), calibration.getTriY(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
@@ -77,8 +77,7 @@ public class LightService {
 
         // 현재 시간 -1분 데이터 정리
         LocalDateTime oneMinuteAgoFrom = LocalDateTime.now().minusMinutes(1).withSecond(0).withNano(0);
-        log.info(String.valueOf(oneMinuteAgoFrom));
-        LocalDateTime oneMinuteAgoTo = oneMinuteAgoFrom.withSecond(59);
+        LocalDateTime oneMinuteAgoTo = oneMinuteAgoFrom.plusMinutes(1).withSecond(0).withNano(0);
         Query query = new Query(Criteria.where("datetime").gte(oneMinuteAgoFrom).lt(oneMinuteAgoTo));
         List<Light> dataWithinOneMinute = mongoTemplate.find(query, Light.class, "light");
 
@@ -138,7 +137,7 @@ public class LightService {
 
             // mongodb에 저장
             mongoTemplate1m.save(lightAvg,"light");
-            log.info(oneMinuteAgoFrom+" >> 1m Data Save Completed!");
+            log.info(oneMinuteAgoFrom+" >> ****** 1m Data Save Completed! ******");
         }
     }
 }
