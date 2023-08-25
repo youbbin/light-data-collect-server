@@ -40,9 +40,7 @@ public class LightService {
                 .set("c_" + sensorDto.getSensorId(), sensorDto.getC());
 
         mongoTemplate.upsert(query, update, "light");
-
-        log.info("Sensor Datetime : " + sensorDto.getDatetime());
-        log.info("ISO Datetime : "+dateTime);
+        log.info(sensorDto.getDatetime()+ " >> Sensor "+sensorDto.getSensorId()+" Save Completed!");
         return "Save Completed !";
     }
 
@@ -52,7 +50,6 @@ public class LightService {
         Query query = new Query(Criteria.where("datetime").is(now));
 
         Light test = mongoTemplate.findOne(query,Light.class,"light");
-        log.info(Double.toString(test.getIllum_1()));
         return test;
 
     }

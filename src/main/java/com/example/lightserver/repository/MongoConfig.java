@@ -14,6 +14,6 @@ public class MongoConfig {
     }
     @Bean
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), "testdb");
+        return new MongoTemplate(mongoClient(), "lab_401_db");
     }
 }
