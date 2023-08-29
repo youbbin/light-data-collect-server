@@ -105,7 +105,7 @@ public class LightService {
                         // 1분 동안의 색온도 가져와서 총합 계산
                         Method getCctMethod = lightClass.getMethod("getCct_"+ (i + 1));
                         double cctValue = (double) getCctMethod.invoke(light);
-                        sumCct[i] = cctValue;
+                        sumCct[i] += cctValue;
 
                         totalCount++;
                     }catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
