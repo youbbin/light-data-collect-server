@@ -2,6 +2,7 @@ package com.example.lightserver.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.time.LocalDateTime;
 @Setter
 @Document(collection = "light")
 public class LightAvg {
+    @Id
     private LocalDateTime datetime;
     private double illum_1;
     private double cct_1;

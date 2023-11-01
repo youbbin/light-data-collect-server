@@ -1,4 +1,4 @@
-package com.example.lightserver.repository;
+package com.example.lightserver.config;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -15,11 +15,11 @@ public class MongoConfig {
     }
     @Bean("mongoTemplate")
     public MongoTemplate mongoTemplate() {
-        return new MongoTemplate(mongoClient(), "lab_401_db");
+        return new MongoTemplate(mongoClient(), "lab_401_db_202311");
     }
 
     @Bean("mongoTemplate1m")
     public MongoTemplate mongoTemplate1m() {
-        return new MongoTemplate(mongoClient(), "lab_401_1m_db");
+        return new MongoTemplate(mongoClient(), "lab_401_1m_db_202311");
     }
 }

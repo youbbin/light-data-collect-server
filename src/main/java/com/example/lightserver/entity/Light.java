@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @Document(collection = "light")
 public class Light {
+    @Id
     private LocalDateTime datetime;
     private int r_1;
     private int g_1;
