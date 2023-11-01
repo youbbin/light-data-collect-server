@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.data.mongodb.core.mapping.FieldType;
 
 import java.time.LocalDateTime;
 @Getter
@@ -12,7 +14,7 @@ import java.time.LocalDateTime;
 @Document(collection = "light")
 public class Light {
     @Id
-    private LocalDateTime datetime;
+    private LocalDateTime _id;
     private int r_1;
     private int g_1;
     private int b_1;

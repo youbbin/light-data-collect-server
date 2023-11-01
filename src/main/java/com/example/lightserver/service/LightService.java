@@ -6,7 +6,6 @@ import com.example.lightserver.entity.LightAvg;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -43,7 +42,7 @@ public class LightService {
         DateTimeFormatter input = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime dateTime = LocalDateTime.parse(sensorDto.getDatetime(), input);
 
-        Query query = new Query(Criteria.where("datetime").is(dateTime.withNano(0)));
+        Query query = new Query(Criteria.where("_id").is(dateTime.withNano(0)));
         Update update = new Update()
                 .set("cct_" + sensorDto.getSensorId(), calibration.getCct(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
                 .set("illum_" + sensorDto.getSensorId(), calibration.getTriY(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
@@ -59,7 +58,7 @@ public class LightService {
 
     public Light getStatus() {
         LocalDateTime now = LocalDateTime.now().withSecond(0).withNano(0);
-        Query query = new Query(Criteria.where("datetime").is(now));
+        Query query = new Query(Criteria.where("_id").is(now));
 
         Light test = mongoTemplate1m.findOne(query, Light.class, "light");
         return test;
@@ -69,7 +68,7 @@ public class LightService {
     /*
         1분 평균을 lab_401_1m_db에 따로 저장
      */
-    @Scheduled(cron = "5 * * * * *") // 매일 매시 매분 5초마다 실행
+    @Scheduled(cron = "30 * * * * *") // 매일 매시 매분 30초마다 실행
     public void saveAverages1m() throws ClassNotFoundException {
         int sensor_num = 9;
         Class<?> lightClass = Class.forName("com.example.lightserver.entity.Light");
@@ -78,7 +77,7 @@ public class LightService {
         // 현재 시간 -1분 데이터 정리
         LocalDateTime oneMinuteAgoFrom = LocalDateTime.now().minusMinutes(1).withSecond(0).withNano(0);
         LocalDateTime oneMinuteAgoTo = oneMinuteAgoFrom.plusMinutes(1).withSecond(0).withNano(0);
-        Query query = new Query(Criteria.where("datetime").gte(oneMinuteAgoFrom).lt(oneMinuteAgoTo));
+        Query query = new Query(Criteria.where("_id").gte(oneMinuteAgoFrom).lt(oneMinuteAgoTo));
         List<Light> dataWithinOneMinute = mongoTemplate.find(query, Light.class, "light");
 
         if (!dataWithinOneMinute.isEmpty()) {
@@ -121,7 +120,7 @@ public class LightService {
 
             // LightAvg 객체에 할당
             LightAvg lightAvg = new LightAvg();
-            lightAvg.setDatetime(oneMinuteAgoFrom);
+            lightAvg.set_id(oneMinuteAgoFrom);
             for (int i = 0; i < sensor_num; i++) {
                 try{
                     Method setIllumAvgMethod = lightAvgClass.getMethod("setIllum_" + (i + 1), double.class);

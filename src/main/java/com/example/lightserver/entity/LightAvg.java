@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Document(collection = "light")
 public class LightAvg {
     @Id
-    private LocalDateTime datetime;
+    private LocalDateTime _id;
     private double illum_1;
     private double cct_1;
     private double illum_2;
