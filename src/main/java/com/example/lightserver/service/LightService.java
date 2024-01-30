@@ -32,6 +32,9 @@ public class LightService {
     @Qualifier("mongoTemplate1m")
     private final MongoTemplate mongoTemplate1m;
 
+//    @Qualifier("mongoTemplate_fix")
+//    private final MongoTemplate mongoTemplate_fix;
+
     private final Calibration calibration;
 
     /*
@@ -44,8 +47,8 @@ public class LightService {
 
         Query query = new Query(Criteria.where("_id").is(dateTime.withNano(0)));
         Update update = new Update()
-                .set("cct_" + sensorDto.getSensorId(), calibration.getCct(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
-                .set("illum_" + sensorDto.getSensorId(), calibration.getTriY(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB()))
+                .set("cct_" + sensorDto.getSensorId(), calibration.getCct(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB(), sensorDto.getC()))
+                .set("illum_" + sensorDto.getSensorId(), calibration.getTriY(sensorDto.getSensorId(), sensorDto.getR(), sensorDto.getG(), sensorDto.getB(), sensorDto.getC()))
                 .set("r_" + sensorDto.getSensorId(), sensorDto.getR())
                 .set("g_" + sensorDto.getSensorId(), sensorDto.getG())
                 .set("b_" + sensorDto.getSensorId(), sensorDto.getB())
@@ -53,6 +56,12 @@ public class LightService {
 
         mongoTemplate.upsert(query, update, "light");
         log.info(sensorDto.getDatetime() + " >> Sensor " + sensorDto.getSensorId() + " Save Completed!");
+
+        // 센서 보정용
+//        if(sensorDto.getSensorId() == 5){ // 보정할 센서 번호
+//            mongoTemplate_fix.upsert(query, update, "light");
+//        }
+
         return "Save Completed !";
     }
 
@@ -121,6 +130,7 @@ public class LightService {
             // LightAvg 객체에 할당
             LightAvg lightAvg = new LightAvg();
             lightAvg.set_id(oneMinuteAgoFrom);
+
             for (int i = 0; i < sensor_num; i++) {
                 try{
                     Method setIllumAvgMethod = lightAvgClass.getMethod("setIllum_" + (i + 1), double.class);
@@ -135,7 +145,8 @@ public class LightService {
 
 
             // mongodb에 저장
-            mongoTemplate1m.save(lightAvg,"light");
+            mongoTemplate1m.insert(lightAvg,"light");
+
             log.info(oneMinuteAgoFrom+" >> ****** 1m Data Save Completed! ******");
         }
     }
